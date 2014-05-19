@@ -2,6 +2,7 @@
 from __future__ import print_function
 from flask import Flask, url_for, redirect, render_template, send_file
 from PIL import Image
+from PIL import ImageCms
 import os
 import random
 
@@ -25,28 +26,47 @@ def get_tshirt(size):
     else:
         return "We don't have that size"
 
-@app.route("/tammy/<width>/<height>")
-def get_tammy(width, height):
-    requested_width = int(width)
-    requested_height = int(height)
-    path = "static/images"
+@app.route("/chompsky/<int:width>/<int:height>")
+def get_chompsky(width, height):
+    if width < 0 or height < 0:
+        raise PyCMSError
+    elif width == 0 and height == 0:
+        width = 75 
+        height = 75
+    elif width == 0:
+        width = 75 
+    elif height == 0:
+        height = 75 
+    ratio = float(width)/height
+    if ratio < 1.0:
+        folder = 0
+    elif ratio == 1.0:
+        folder = 1
+    elif ratio > 1.0:
+        folder = 2
+    path = "static/images/{0}".format(folder)
     photo = random.choice(os.listdir(path))
     f = Image.open(os.path.join(path, photo))
     (actual_width, actual_height) = f.size
-    width_diff = (actual_width - requested_width)/2
-    height_diff = (actual_height - requested_height)/2
-    if width_diff > 0 and height_diff > 0:
-        upper = 0 + height_diff
-        lower = actual_height - height_diff
-        left = 0 + width_diff
-        right = actual_width - width_diff
-        box = (left, upper, right, lower)
-        new_picture = f.crop(box)
-    else:
-        new_picture = f.resize((requested_width, requested_height))
-    new_picture.save("static/images/new_chompsky.png")
+    actual_ratio = float(actual_width)/actual_height
+    required_height = int(actual_width/ratio)
+    required_width = int(actual_height * ratio)
+    if ratio > actual_ratio:
+        diff_change = (actual_height - required_height)/2
+        box = (0, diff_change, actual_width, actual_height-diff_change)
+        new = f.crop(box)
+    elif ratio < actual_ratio:   
+        diff_change = (actual_width - required_width)/2
+        box = (0 + diff_change, 0, actual_width - diff_change, actual_height)
+        new = f.crop(box)
+    elif actual_ratio == ratio:
+        new = f.resize((width, height))
+    #else:
+        #return "height:{0}, {1}, {2}, width:{3}, {4}, {5}, ratio: {6}".format(required_height, height, actual_height, required_width, width, actual_width, ratio) 
+    new = new.resize((width, height))
+    new.save("static/images/new_chompsky.png")
     return send_file("static/images/new_chompsky.png")
- 
+    
 
 @app.route("/kris/<width>/<height>")
 def get_kris(width, height):
