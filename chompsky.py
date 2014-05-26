@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, url_for, redirect, render_template, send_file
 from PIL import Image
-from PIL import ImageCms
 import os
 import random
 
@@ -32,7 +31,7 @@ def available_photo(file_name):
 def hello():
     return render_template('index.html') 
 
-@app.route("/chompsky/<int:width>/<int:height>")
+@app.route("/<int:width>/<int:height>")
 def get_chompsky(width, height):
     width, height = check_parameters(width, height)     
     ratio = float(width)/height
@@ -70,4 +69,4 @@ def get_chompsky(width, height):
     return send_file(new_path)
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

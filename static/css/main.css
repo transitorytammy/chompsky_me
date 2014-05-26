@@ -1,0 +1,46 @@
+body {
+    font-family: 'Droid Sans', sans-serif;
+}
+
+
+h1 {
+    font-size: 100px;
+    text-align: center;
+    margin: 20px;
+}
+
+.blurb {
+    width: 800px;
+    text-align: center;
+    margin: auto;
+}
+
+p {
+    display: inline-block;
+}
+
+.example {
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link {
+    color: black;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+}
+
+#pictures {
+    position: relative;
+    text-align: center;
+}
+
+img{
+    margin: 10px;
+}
