@@ -9,6 +9,8 @@ app = Flask(__name__)
 def check_parameters(width, height):
     if width < 0 or height < 0:
         pass
+    if width >= 5000 or height >= 5000:
+        width = 'dne'
     if width == 0:
         width = 75 
     if height == 0:
@@ -34,6 +36,8 @@ def hello():
 @app.route("/<int:width>/<int:height>")
 def get_chompsky(width, height):
     width, height = check_parameters(width, height)     
+    if width == 'dne':
+        return send_file('error.text')
     ratio = float(width)/height
     file_name = "{0}_{1}_{2}.png".format(ratio, width, height)
     path = get_path(ratio)
